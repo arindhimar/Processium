@@ -1,0 +1,30 @@
+# Virtual Environment
+venv/
+env/
+processium/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff
+db.sqlite3
+media/
+staticfiles/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# Migrations (optional if early stage)
+# core/migrations/*
+# !core/migrations/__init__.py
+
+# Pytest
+.pytest_cache/
+
+# VSCode
+.vscode/
