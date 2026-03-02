@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Box,
     TextField,
@@ -16,6 +17,7 @@ import {
     Divider,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useAuth } from '../../context/AuthContext';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -134,16 +136,18 @@ function BrandPanel() {
     );
 }
 
-/* ─── Main Login Page (UI-Only — no backend calls) ─── */
+/* ─── Main Login Page ─── */
 export default function LoginPage() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const navigate = useNavigate();
+    const { login } = useAuth();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const [loading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [ssoLoading] = useState(false);
     const [error, setError] = useState('');
     const [touched, setTouched] = useState({ email: false, password: false });
@@ -159,15 +163,29 @@ export default function LoginPage() {
     const handleBlur = (field) =>
         setTouched((prev) => ({ ...prev, [field]: true }));
 
-    /* No-op: UI only — does not call any backend service */
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setTouched({ email: true, password: true });
+
+        if (!isFormValid) return;
+
+        setLoading(true);
+        setError('');
+
+        try {
+            await login({ email, password });
+            // Navigate to dashboard or home after successful login
+            navigate('/dashboard');
+        } catch (err) {
+            setError(err.message || 'Login failed. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     /* No-op: UI only */
     const handleMicrosoftLogin = () => {
-        // Intentionally empty — UI shell only
+        // TODO: Implement Microsoft SSO
     };
 
     return (
