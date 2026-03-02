@@ -13,13 +13,14 @@ export default function App() {
           {/* Default redirect */}
           <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* Public route */}
-        <Route path="/login" element={<LoginPage />} />
+          {/* Public route */}
+          <Route path="/login" element={<LoginPage />} />
 
-        {/* Dashboard route */}
-        <Route path="/dashboard" element={<TemplateDashboard />} />
+          {/* Dashboard route */}
+          <Route path="/dashboard" element={<TemplateDashboard />} />
 
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
