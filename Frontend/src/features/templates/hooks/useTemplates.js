@@ -1,11 +1,13 @@
 /**
  * useTemplates Hook
- * Manages template state and API operations with proper loading and error handling.
- * Architecture matches the HR-FLOW dashboard pattern.
+ * Manages template state and API operations with proper loading and error handling
  */
 
 import { useState, useCallback, useEffect } from 'react';
 import { templateService } from '../services/templateService';
+
+// Map to store ongoing clone promises per template ID to avoid duplicate clones
+const clonePromises = new Map();
 
 export const useTemplates = () => {
   const [templates, setTemplates] = useState([]);
@@ -14,9 +16,17 @@ export const useTemplates = () => {
   const [error, setError] = useState(null);
 
   /**
+   * Fetch all templates on component mount
+   */
+  useEffect(() => {
+    fetchTemplates();
+  }, []);
+
+  /**
    * Fetch templates from service
    */
   const fetchTemplates = useCallback(async () => {
+    if (isLoading) return;
     setIsLoading(true);
     setError(null);
     try {
@@ -31,13 +41,6 @@ export const useTemplates = () => {
   }, []);
 
   /**
-   * Fetch all templates on component mount
-   */
-  useEffect(() => {
-    fetchTemplates();
-  }, [fetchTemplates]);
-
-  /**
    * Select a template to edit
    */
   const selectTemplate = useCallback((template) => {
@@ -49,11 +52,13 @@ export const useTemplates = () => {
    * Create new template
    */
   const createTemplate = useCallback(async (templateData) => {
+    if (isLoading) return;
     setIsLoading(true);
     setError(null);
     try {
       const response = await templateService.createTemplate(templateData);
-      // Re-fetch to stay in sync with the service layer
+      // Re-fetch to stay in sync with the service layer (avoids duplicates
+      // caused by both an optimistic push AND the service array growing)
       const latest = await templateService.fetchTemplates();
       setTemplates(latest.data);
       return response.data;
@@ -70,6 +75,7 @@ export const useTemplates = () => {
    * Update existing template
    */
   const updateTemplate = useCallback(async (id, templateData) => {
+    if (isLoading) return;
     setIsLoading(true);
     setError(null);
     try {
@@ -94,25 +100,38 @@ export const useTemplates = () => {
    * Clone template
    */
   const cloneTemplate = useCallback(async (id) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await templateService.cloneTemplate(id);
-      setTemplates((prev) => [...prev, response.data]);
-      return response.data;
-    } catch (err) {
-      setError(err.message || 'Failed to clone template');
-      console.error('[useTemplates] Error cloning template:', err);
-      throw err;
-    } finally {
-      setIsLoading(false);
+    // If a clone operation for this ID is already in progress, return the existing promise
+    if (clonePromises.has(id)) {
+      console.warn('[useTemplates] Duplicate clone prevented for id', id);
+      return clonePromises.get(id);
     }
+    // Create a new promise for the clone operation and store it
+    const clonePromise = (async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await templateService.cloneTemplate(id);
+        setTemplates((prev) => [...prev, response.data]);
+        setSelectedTemplate(response.data);
+        return response.data;
+      } catch (err) {
+        setError(err.message || 'Failed to clone template');
+        console.error('[useTemplates] Error cloning template:', err);
+        throw err;
+      } finally {
+        setIsLoading(false);
+        clonePromises.delete(id);
+      }
+    })();
+    clonePromises.set(id, clonePromise);
+    return clonePromise;
   }, []);
 
   /**
    * Delete template
    */
   const deleteTemplate = useCallback(async (id) => {
+    if (isLoading) return;
     setIsLoading(true);
     setError(null);
     try {

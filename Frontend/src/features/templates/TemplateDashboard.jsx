@@ -1,34 +1,9 @@
 import { useState } from "react";
 import { useTemplates } from "./hooks/useTemplates";
 import TemplateRow from "./components/TemplateRow";
+import InlineTemplateRow from "./components/InlineTemplateRow";
 import CreateTemplateModal from "./components/CreateTemplateModal";
 import WorkflowBuilder from "./components/WorkflowBuilder";
-
-// ── Category lookup maps ───────────────────────────────────────────────────────
-
-const categoryIcons = {
-  Hiring:      "description",
-  Recruitment: "work",
-  Evaluation:  "rate_review",
-  Legal:       "gavel",
-  Process:     "checklist",
-  Finance:     "attach_money",
-  Onboarding:  "person_add",
-  Operations:  "settings",
-  General:     "file_copy",
-};
-
-const categoryColors = {
-  Hiring:      "blue",
-  Recruitment: "cyan",
-  Evaluation:  "purple",
-  Legal:       "gray",
-  Process:     "teal",
-  Finance:     "pink",
-  Onboarding:  "green",
-  Operations:  "orange",
-  General:     "indigo",
-};
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
@@ -42,9 +17,10 @@ const TemplateDashboard = () => {
     cloneTemplate,
   } = useTemplates();
 
-  const [searchTerm,       setSearchTerm]       = useState("");
-  const [sortBy,           setSortBy]           = useState("modified");
-  const [showCreateModal,  setShowCreateModal]  = useState(false);
+  const [searchTerm,      setSearchTerm]      = useState("");
+  const [sortBy,          setSortBy]          = useState("modified");
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [isAddingInline,  setIsAddingInline]  = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   // ── Derived data ─────────────────────────────────────────────────────────────
@@ -68,6 +44,7 @@ const TemplateDashboard = () => {
   const handleCreateTemplate = async (formData) => {
     try {
       await createTemplate(formData);
+      setIsAddingInline(false);
     } catch (err) {
       console.error("[TemplateDashboard] Failed to create template:", err);
     }
@@ -133,7 +110,7 @@ const TemplateDashboard = () => {
               </div>
               <input
                 className="block w-full pl-9 pr-3 py-1.5 border border-border-light dark:border-border-dark rounded-full bg-background-light/30 dark:bg-background-dark/30 text-text-main dark:text-gray-200 placeholder-text-muted focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none text-xs transition-all duration-200"
-                placeholder="Search templates…"
+                placeholder="Search..."
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -173,7 +150,7 @@ const TemplateDashboard = () => {
       )}
 
       {/* ── Main content ────────────────────────────────────────────────────── */}
-      <div className="flex-1 p-6 overflow-y-auto max-w-[1600px] mx-auto w-full">
+      <div className="flex-1 p-4 overflow-y-auto max-w-[1600px] mx-auto w-full">
 
         {/* Toolbar — only shown in list view */}
         {!selectedTemplate && (
@@ -191,9 +168,8 @@ const TemplateDashboard = () => {
                 {sortBy === "modified" ? "Recently Modified" : "By Name"}
               </button>
             </div>
-
             <button
-              onClick={() => setShowCreateModal(true)}
+              onClick={() => setIsAddingInline(true)}
               className="bg-primary text-primary-content px-4 py-1.5 rounded-lg flex items-center gap-2 shadow-md shadow-primary/20 hover:bg-blue-600 transition-all text-xs font-bold hover:shadow-lg active:scale-95"
             >
               <span className="material-symbols-outlined text-[18px]">add</span>
@@ -206,7 +182,7 @@ const TemplateDashboard = () => {
         <div className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-card border border-border-light dark:border-border-dark overflow-hidden">
 
           {/* Column headers */}
-          <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-gray-50/50 dark:bg-gray-800/50 border-b border-border-light dark:border-border-dark text-[9px] font-bold text-text-muted uppercase tracking-widest">
+          <div className="grid grid-cols-12 gap-4 px-6 py-2 bg-gray-50/50 dark:bg-gray-800/50 border-b border-border-light dark:border-border-dark text-[9px] font-bold text-text-muted uppercase tracking-widest">
             {selectedTemplate ? (
               <>
                 <div className="col-span-6 flex items-center pl-2">Template Info</div>
@@ -215,11 +191,9 @@ const TemplateDashboard = () => {
               </>
             ) : (
               <>
-                <div className="col-span-3 flex items-center pl-2">Template Info</div>
-                <div className="col-span-2 flex items-center">Category &amp; Visibility</div>
-                <div className="col-span-2 flex items-center">Status</div>
-                <div className="col-span-3 flex items-center">Metadata &amp; Usage</div>
-                <div className="col-span-2 text-right pr-2">Actions</div>
+                <div className="col-span-4 flex items-center pl-1">Title</div>
+                <div className="col-span-6 flex items-center">Description</div>
+                <div className="col-span-2 text-right pr-1">Actions</div>
               </>
             )}
           </div>
@@ -233,8 +207,6 @@ const TemplateDashboard = () => {
               <TemplateRow
                 key={template.id}
                 template={template}
-                categoryIcon={categoryIcons[template.category] || "file_copy"}
-                categoryColor={categoryColors[template.category] || "indigo"}
                 onUpdate={updateTemplate}
                 onDelete={handleDeleteTemplate}
                 onClone={cloneTemplate}
@@ -247,16 +219,25 @@ const TemplateDashboard = () => {
                 isLoading={isLoading}
               />
             ))}
+
+            {isAddingInline && !selectedTemplate && (
+              <InlineTemplateRow
+                onSave={handleCreateTemplate}
+                onCancel={() => setIsAddingInline(false)}
+              />
+            )}
           </div>
 
-          {sortedTemplates.length === 0 && (
+          {sortedTemplates.length === 0 && !isAddingInline && (
             <div className="px-6 py-16 text-center">
               <span className="material-symbols-outlined text-[48px] text-text-muted block mb-3">
                 inbox
               </span>
               <p className="text-text-muted font-medium">No templates found</p>
               <p className="text-xs text-text-muted mt-1">
-                {searchTerm ? "Try a different search term" : "Create your first template to get started"}
+                {searchTerm
+                  ? "Try a different search term"
+                  : "Create your first template to get started"}
               </p>
             </div>
           )}
@@ -271,7 +252,7 @@ const TemplateDashboard = () => {
         )}
       </div>
 
-      {/* ── Create Template Modal — list-view only ────────────────────────── */}
+      {/* ── Create Template Modal — fallback only ─────────────────────────── */}
       {showCreateModal && !selectedTemplate && (
         <CreateTemplateModal
           onClose={() => setShowCreateModal(false)}
