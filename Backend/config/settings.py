@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'authentication',
     'templates',
     'corsheaders',
+    'components',
 ]
 
 REST_FRAMEWORK = {
