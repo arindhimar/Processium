@@ -10,7 +10,6 @@ const InlineTemplateRow = ({ onSave, onCancel }) => {
   });
 
   const handleSave = () => {
-
     if (!formData.name.trim()) return;
     onSave(formData);
   };
@@ -53,7 +52,11 @@ const InlineTemplateRow = ({ onSave, onCancel }) => {
         <button
           onClick={handleSave}
           disabled={!formData.name.trim()}
-          className={`p-1.5 rounded-full transition-all duration-200 ${!formData.name.trim() ? "opacity-30 cursor-not-allowed" : "text-green-500 hover:bg-green-500 hover:text-white"}`}
+          className={`p-1.5 rounded-full transition-all duration-200 ${
+            !formData.name.trim()
+              ? 'opacity-30 cursor-not-allowed'
+              : 'text-green-500 hover:bg-green-500 hover:text-white'
+          }`}
           title="Save Template"
         >
           <span className="material-symbols-outlined text-[24px]">check</span>
@@ -67,8 +70,6 @@ const InlineTemplateRow = ({ onSave, onCancel }) => {
         </button>
       </div>
     </div>
-
-
   );
 };
 
