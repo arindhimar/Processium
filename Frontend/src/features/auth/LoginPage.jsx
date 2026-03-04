@@ -116,21 +116,10 @@ function BrandPanel() {
                         mb: 2,
                     }}
                 >
-                    Workforce<br />
+                    Workflow<br />
                     management<br />
                     <Box component="span" sx={{ color: '#6366f1' }}>simplified.</Box>
                 </Typography>
-                <Typography
-                    sx={{
-                        color: 'rgba(255,255,255,0.45)',
-                        fontSize: '0.95rem',
-                        lineHeight: 1.7,
-                        maxWidth: 320,
-                    }}
-                >
-                    Track attendance, manage requisitions, and oversee your team — all from one intelligent platform.
-                </Typography>
-
             </Box>
         </Box>
     );
