@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 DJANGO_ENV = os.environ.get('DJANGO_ENV', 'local')
 
