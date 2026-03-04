@@ -125,6 +125,12 @@ export default function WorkflowBuilder({ template }) {
     );
   }, []);
 
+  const handleFormChange = useCallback((id, formValues) => {
+    setCanvasItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, formData: formValues } : item))
+    );
+  }, []);
+
   // ── Render ───────────────────────────────────────────────────────────────────
 
   return (
@@ -178,6 +184,7 @@ export default function WorkflowBuilder({ template }) {
             onRemove={handleRemove}
             selectedId={selectedId}
             onSelect={handleSelect}
+            onFormChange={handleFormChange}
           />
           <WorkflowRightSidebar
             selectedItem={selectedItem}
