@@ -116,14 +116,14 @@ const TemplateRow = ({
         </div>
 
         {/* Status pill */}
-        <div className="col-span-3 flex items-center">
+        {/* <div className="col-span-3 flex items-center">
           <span
             className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${statusInfo.bg} ${statusInfo.text} border ${statusInfo.border}`}
           >
             <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.dot}`} />
             {statusInfo.label}
           </span>
-        </div>
+        </div> */}
       </div>
     );
   }

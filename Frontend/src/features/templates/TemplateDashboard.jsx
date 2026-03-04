@@ -3,6 +3,7 @@ import { useTemplates } from "./hooks/useTemplates";
 import TemplateRow from "./components/TemplateRow";
 import CreateTemplateModal from "./components/CreateTemplateModal";
 import WorkflowBuilder from "./components/WorkflowBuilder";
+import InlineTemplateRow from "./components/InlineTemplateRow";
 
 
 // ── Category lookup maps ───────────────────────────────────────────────────────
@@ -156,30 +157,59 @@ const TemplateDashboard = () => {
         </div>
       </header>
 
-      {/* ── "View All Templates" back-banner ───────────────────────────────── */}
-      {selectedTemplate && (
-        <button
-          onClick={() => setSelectedTemplate(null)}
-          className="w-full flex items-center justify-between px-8 py-3 bg-primary/5 dark:bg-primary/10 border-b border-primary/20 hover:bg-primary/10 dark:hover:bg-primary/15 transition-all duration-200 group shrink-0"
-        >
-          <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-primary text-[18px]">table_rows</span>
-            <span className="text-sm font-semibold text-primary">View All Templates</span>
-            <span className="text-xs text-text-muted">
-              &mdash; {sortedTemplates.length} template{sortedTemplates.length !== 1 ? "s" : ""} in total
-            </span>
-          </div>
-          <span className="material-symbols-outlined text-primary text-[18px] group-hover:translate-x-1 transition-transform duration-200">
-            arrow_forward
-          </span>
-        </button>
-      )}
+
 
       {/* ── Main content ────────────────────────────────────────────────────── */}
-      <div className="flex-1 p-4 overflow-y-auto max-w-[1600px] mx-auto w-full">
 
-        {/* Toolbar — only shown in list view */}
-        {!selectedTemplate && (
+      {selectedTemplate ? (
+        /* ── Builder view: fixed template strip + flex builder ─────────────── */
+        <div className="flex-1 flex flex-col overflow-hidden">
+
+          {/* Template strip — same h-14 as the header */}
+          <div className="h-12 shrink-0 flex items-center gap-3 px-4 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark overflow-hidden">
+
+            {/* Back button */}
+            <button
+              onClick={() => setSelectedTemplate(null)}
+              title="Back to all templates"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold text-primary bg-primary/8 hover:bg-primary/15 border border-primary/20 transition-all shrink-0 group"
+            >
+              <span className="material-symbols-outlined text-[16px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+              All Templates
+            </button>
+
+            <div className="w-px h-6 bg-border-light dark:bg-border-dark shrink-0" />
+
+            {/* Single selected template row — fills remaining width */}
+            <div className="flex-1 min-w-0 overflow-hidden">
+              <div className="bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark overflow-hidden">
+                <TemplateRow
+                  template={selectedTemplate}
+                  onUpdate={updateTemplate}
+                  onDelete={handleDeleteTemplate}
+                  onClone={cloneTemplate}
+                  onClick={() => setSelectedTemplate(null)}
+                  isSelected
+                  isLoading={isLoading}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* WorkflowBuilder — all remaining vertical space */}
+          <div className="flex-1 overflow-hidden">
+            <WorkflowBuilder
+              template={selectedTemplate}
+              onClose={() => setSelectedTemplate(null)}
+            />
+          </div>
+        </div>
+
+      ) : (
+        /* ── List view ─────────────────────────────────────────────────────── */
+        <div className="flex-1 p-4 overflow-y-auto max-w-[1600px] mx-auto w-full">
+
+          {/* Toolbar */}
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-3">
               <button className="px-3.5 py-1.5 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-xs font-semibold text-text-main dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 shadow-sm transition-all hover:border-primary/30">
@@ -202,81 +232,56 @@ const TemplateDashboard = () => {
               New Template
             </button>
           </div>
-        )}
 
-        {/* ── Templates table ──────────────────────────────────────────────── */}
-        <div className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-card border border-border-light dark:border-border-dark overflow-hidden">
+          {/* ── Templates table ────────────────────────────────────────────── */}
+          <div className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-card border border-border-light dark:border-border-dark overflow-hidden">
 
-          {/* Column headers */}
-          <div className="grid grid-cols-12 gap-4 px-6 py-2 bg-gray-50/50 dark:bg-gray-800/50 border-b border-border-light dark:border-border-dark text-[9px] font-bold text-text-muted uppercase tracking-widest">
-            {selectedTemplate ? (
-              <>
-                <div className="col-span-6 flex items-center pl-2">Template Info</div>
-                <div className="col-span-3 flex items-center">Category</div>
-                <div className="col-span-3 flex items-center">Status</div>
-              </>
-            ) : (
-              <>
-                <div className="col-span-4 flex items-center pl-1">Title</div>
-                <div className="col-span-6 flex items-center">Description</div>
-                <div className="col-span-2 text-right pr-1">Actions</div>
-              </>
-            )}
-          </div>
-
-          {/* Rows */}
-          <div className="divide-y divide-border-light dark:divide-border-dark">
-            {(selectedTemplate
-              ? sortedTemplates.filter((t) => t.id === selectedTemplate.id)
-              : sortedTemplates
-            ).map((template) => (
-              <TemplateRow
-                key={template.id}
-                template={template}
-                onUpdate={updateTemplate}
-                onDelete={handleDeleteTemplate}
-                onClone={cloneTemplate}
-                onClick={() =>
-                  setSelectedTemplate(
-                    selectedTemplate?.id === template.id ? null : template
-                  )
-                }
-                isSelected={selectedTemplate?.id === template.id}
-                isLoading={isLoading}
-              />
-            ))}
-
-            {isAddingInline && !selectedTemplate && (
-              <InlineTemplateRow
-                onSave={handleCreateTemplate}
-                onCancel={() => setIsAddingInline(false)}
-              />
-            )}
-          </div>
-
-          {sortedTemplates.length === 0 && !isAddingInline && (
-            <div className="px-6 py-16 text-center">
-              <span className="material-symbols-outlined text-[48px] text-text-muted block mb-3">
-                inbox
-              </span>
-              <p className="text-text-muted font-medium">No templates found</p>
-              <p className="text-xs text-text-muted mt-1">
-                {searchTerm
-                  ? "Try a different search term"
-                  : "Create your first template to get started"}
-              </p>
+            {/* Column headers */}
+            <div className="grid grid-cols-12 gap-4 px-2 py-2 bg-gray-50/50 dark:bg-gray-800/50 border-b border-border-light dark:border-border-dark text-[9px] font-bold text-text-muted uppercase tracking-widest">
+              <div className="col-span-4 flex items-center pl-1">Title</div>
+              <div className="col-span-6 flex items-center">Description</div>
+              <div className="col-span-2 text-right pr-1">Actions</div>
             </div>
-          )}
-        </div>
 
-        {/* ── Inline WorkflowBuilder ────────────────────────────────────────── */}
-        {selectedTemplate && (
-          <WorkflowBuilder
-            template={selectedTemplate}
-            onClose={() => setSelectedTemplate(null)}
-          />
-        )}
-      </div>
+            {/* Rows */}
+            <div className="divide-y divide-border-light dark:divide-border-dark">
+              {sortedTemplates.map((template) => (
+                <TemplateRow
+                  key={template.id}
+                  template={template}
+                  onUpdate={updateTemplate}
+                  onDelete={handleDeleteTemplate}
+                  onClone={cloneTemplate}
+                  onClick={() => setSelectedTemplate(template)}
+                  isSelected={false}
+                  isLoading={isLoading}
+                />
+              ))}
+
+              {isAddingInline && (
+                <InlineTemplateRow
+                  onSave={handleCreateTemplate}
+                  onCancel={() => setIsAddingInline(false)}
+                />
+              )}
+            </div>
+
+            {sortedTemplates.length === 0 && !isAddingInline && (
+              <div className="px-6 py-16 text-center">
+                <span className="material-symbols-outlined text-[48px] text-text-muted block mb-3">
+                  inbox
+                </span>
+                <p className="text-text-muted font-medium">No templates found</p>
+                <p className="text-xs text-text-muted mt-1">
+                  {searchTerm
+                    ? "Try a different search term"
+                    : "Create your first template to get started"}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* ── Create Template Modal — fallback only ─────────────────────────── */}
       {showCreateModal && !selectedTemplate && (

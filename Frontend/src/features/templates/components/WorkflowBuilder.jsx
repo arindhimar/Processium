@@ -177,7 +177,7 @@ export default function WorkflowBuilder({ template }) {
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        <div className="flex overflow-hidden" style={{ height: '480px' }}>
+        <div className="flex overflow-hidden" style={{ height: '83vh' }}>
           <WorkflowLeftSidebar />
           <WorkflowCanvas
             canvasItems={canvasItems}
