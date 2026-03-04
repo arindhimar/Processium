@@ -105,28 +105,24 @@ function BrandPanel() {
         </Box>
       </Box>
 
-      {/* Center content */}
-      <Box sx={{ position: "relative", zIndex: 1 }}>
-        <Typography
-          sx={{
-            color: "#fff",
-            fontWeight: 800,
-            fontSize: { md: "2.2rem", lg: "2.75rem" },
-            lineHeight: 1.2,
-            mb: 2,
-          }}
-        >
-          Workflow
-          <br />
-          management
-          <br />
-          <Box component="span" sx={{ color: "#6366f1" }}>
-            simplified.
-          </Box>
-        </Typography>
-      </Box>
-    </Box>
-  );
+            {/* Center content */}
+            <Box sx={{ position: 'relative', zIndex: 1 }}>
+                <Typography
+                    sx={{
+                        color: '#fff',
+                        fontWeight: 800,
+                        fontSize: { md: '2.2rem', lg: '2.75rem' },
+                        lineHeight: 1.2,
+                        mb: 2,
+                    }}
+                >
+                    Workflow<br />
+                    management<br />
+                    <Box component="span" sx={{ color: '#6366f1' }}>simplified.</Box>
+                </Typography>
+            </Box>
+        </Box>
+    );
 }
 
 /* ─── Main Login Page ─── */
