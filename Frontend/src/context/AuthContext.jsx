@@ -4,24 +4,30 @@
 //  entire React tree via Context + useReducer.
 // ============================================================
 
-import { createContext, useContext, useReducer, useEffect, useCallback } from "react";
 import {
-  login     as apiLogin,
-  logout    as apiLogout,
-  register  as apiRegister,
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useCallback,
+} from "react";
+import {
+  login as apiLogin,
+  logout as apiLogout,
+  register as apiRegister,
   getMe,
   refreshToken,
   isAuthenticated,
-} from "../services/authService";
+} from "../features/auth/authService";
 
 // ── State shape ──────────────────────────────────────────────
 //  { user: User|null, loading: boolean, error: string|null, initialized: boolean }
 
 const initialState = {
-  user:        null,
-  loading:     false,
-  error:       null,
-  initialized: false,   // true once the initial /me check completes
+  user: null,
+  loading: false,
+  error: null,
+  initialized: false, // true once the initial /me check completes
 };
 
 // ── Reducer ──────────────────────────────────────────────────
@@ -31,9 +37,20 @@ function authReducer(state, action) {
     case "LOADING":
       return { ...state, loading: true, error: null };
     case "SUCCESS":
-      return { ...state, loading: false, error: null, user: action.payload, initialized: true };
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        user: action.payload,
+        initialized: true,
+      };
     case "ERROR":
-      return { ...state, loading: false, error: action.payload, initialized: true };
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+        initialized: true,
+      };
     case "LOGOUT":
       return { ...initialState, initialized: true };
     case "CLEAR_ERROR":
@@ -56,12 +73,12 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     async function restoreSession() {
       if (!isAuthenticated()) {
-        dispatch({ type: "LOGOUT" });   // marks initialized without a user
+        dispatch({ type: "LOGOUT" }); // marks initialized without a user
         return;
       }
       dispatch({ type: "LOADING" });
       try {
-        const user = await getMe();     // will auto-refresh on 401
+        const user = await getMe(); // will auto-refresh on 401
         dispatch({ type: "SUCCESS", payload: user });
       } catch {
         // Token invalid/expired and refresh failed — clear state
@@ -85,19 +102,27 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const register = useCallback(async ({ full_name, email, password, is_admin = false }) => {
-    dispatch({ type: "LOADING" });
-    try {
-      const data = await apiRegister({ full_name, email, password, is_admin });
-      // Auto-login after registration: fetch user via /me (tokens not returned by register)
-      // If your backend returns tokens on register, swap the line below for apiLogin logic.
-      dispatch({ type: "SUCCESS", payload: data.user });
-      return data;
-    } catch (err) {
-      dispatch({ type: "ERROR", payload: err.message });
-      throw err;
-    }
-  }, []);
+  const register = useCallback(
+    async ({ full_name, email, password, is_admin = false }) => {
+      dispatch({ type: "LOADING" });
+      try {
+        const data = await apiRegister({
+          full_name,
+          email,
+          password,
+          is_admin,
+        });
+        // Auto-login after registration: fetch user via /me (tokens not returned by register)
+        // If your backend returns tokens on register, swap the line below for apiLogin logic.
+        dispatch({ type: "SUCCESS", payload: data.user });
+        return data;
+      } catch (err) {
+        dispatch({ type: "ERROR", payload: err.message });
+        throw err;
+      }
+    },
+    [],
+  );
 
   const logout = useCallback(async () => {
     try {
@@ -124,10 +149,10 @@ export function AuthProvider({ children }) {
 
   const value = {
     // State
-    user:           state.user,
-    loading:        state.loading,
-    error:          state.error,
-    initialized:    state.initialized,
+    user: state.user,
+    loading: state.loading,
+    error: state.error,
+    initialized: state.initialized,
     isAuthenticated: Boolean(state.user),
 
     // Actions
