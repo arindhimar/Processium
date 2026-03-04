@@ -7,6 +7,9 @@
 import { useState, useCallback, useEffect } from 'react';
 import { templateService } from '../services/templateService';
 
+// Map to store ongoing clone promises per template ID to avoid duplicate clones
+const clonePromises = new Map();
+
 export const useTemplates = () => {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);

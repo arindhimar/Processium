@@ -136,7 +136,7 @@ export default function WorkflowBuilder({ template }) {
   return (
     <div className="border-t border-border-light dark:border-border-dark animate-slideDown mt-4">
       {/* Builder toolbar */}
-      <div className="flex items-center justify-between px-6 py-2.5 bg-slate-50 dark:bg-gray-800/60 border-b border-border-light dark:border-border-dark shrink-0">
+      {/* <div className="flex items-center justify-between px-6 py-2.5 bg-slate-50 dark:bg-gray-800/60 border-b border-border-light dark:border-border-dark shrink-0">
         <div className="flex items-center gap-3">
           <span className="material-symbols-outlined text-primary text-[20px]">
             account_tree
@@ -167,7 +167,7 @@ export default function WorkflowBuilder({ template }) {
             Save Workflow
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* DnD Builder body */}
       <DndContext

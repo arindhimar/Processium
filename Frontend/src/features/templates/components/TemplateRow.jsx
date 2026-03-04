@@ -93,6 +93,43 @@ const TemplateRow = ({
     setIsEditing(false);
   };
 
+  // ── Selected layout (shown when builder is open) ──────────────────────────
+
+  if (isSelected) {
+    return (
+      <div
+        onClick={onClick}
+        className="grid grid-cols-12 gap-4 px-6 py-5 items-center bg-blue-50/60 dark:bg-blue-900/10 border-l-2 border-primary cursor-pointer hover:bg-blue-50/80 dark:hover:bg-blue-900/15 transition-colors duration-200 group"
+      >
+        {/* Template name — wide */}
+        <div className="col-span-6 flex items-center gap-3">
+          <h3 className="font-bold text-base text-text-main dark:text-white leading-tight truncate">
+            {template.name}
+          </h3>
+        </div>
+
+        {/* Category badge */}
+        <div className="col-span-3 flex items-center">
+          <span className="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+            {template.category || 'General'}
+          </span>
+        </div>
+
+        {/* Status pill */}
+        <div className="col-span-3 flex items-center">
+          <span
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${statusInfo.bg} ${statusInfo.text} border ${statusInfo.border}`}
+          >
+            <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.dot}`} />
+            {statusInfo.label}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Default list layout ────────────────────────────────────────────────────
+
   return (
     <div
       onClick={onClick}

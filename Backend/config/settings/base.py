@@ -1,14 +1,16 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
+load_dotenv()
 # config/settings/base.py is 3 levels deep from Backend/
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-kzu1ab*m6^$kqi750e(^b#u7em(6cuy6v+b65l4omipoos5dtu')
 
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -21,6 +23,7 @@ INSTALLED_APPS = [
     'users',
     'authentication',
     'templates',
+    'components',
     'corsheaders',
 ]
 
@@ -85,3 +88,26 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+# ── JWT ───────────────────────────────────────────────────────────────────────
+JWT_SECRET = os.environ.get('JWT_SECRET', SECRET_KEY)
+JWT_ALGORITHM = os.environ.get('JWT_ALGORITHM', 'HS256')
+JWT_ACCESS_TTL = int(os.environ.get('JWT_ACCESS_TTL', 900))      # seconds
+JWT_REFRESH_TTL = int(os.environ.get('JWT_REFRESH_TTL', 604800)) # seconds
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': LOG_LEVEL,
+    },
+}
