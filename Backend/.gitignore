@@ -29,3 +29,8 @@ staticfiles/
 users/tests/
 authentication/tests.py
 templates/tests.py
+components/tests.py
+
+# Migrations (only keep __init__.py)
+*/migrations/*
+!*/migrations/__init__.py
