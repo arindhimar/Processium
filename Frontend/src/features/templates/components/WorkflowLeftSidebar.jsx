@@ -41,7 +41,7 @@ function DraggableCard({ component }) {
 
 export default function WorkflowLeftSidebar() {
   return (
-    <aside className="flex w-56 flex-shrink-0 flex-col border-r border-border-light dark:border-border-dark bg-gray-50/50 dark:bg-gray-800/30">
+    <aside className="flex w-64 flex-shrink-0 flex-col border-r border-border-light dark:border-border-dark bg-gray-50/50 dark:bg-gray-800/30">
       <div className="border-b border-border-light dark:border-border-dark px-3 py-2.5">
         <h3 className="text-[10px] font-bold uppercase tracking-wider text-text-muted">
           Workflow Components
