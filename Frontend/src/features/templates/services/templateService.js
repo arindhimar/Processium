@@ -102,7 +102,7 @@ export function normalizeTemplate(raw) {
 function denormalizeTemplate(data) {
   return {
     template_name: data.name ?? data.template_name ?? "",
-    template_description: data.content ?? data.template_description ?? "",
+    template_description: data.description ?? data.template_description ?? "",
   };
 }
 
@@ -129,6 +129,8 @@ export const templateService = {
    */
   createTemplate: async (templateData) => {
     const payload = denormalizeTemplate(templateData);
+    console.log("Pyaload:", payload);
+    console.log("Template Data: ", templateData);
     const data = await apiRequest("/api/templates/", {
       method: "POST",
       body: payload,
@@ -142,7 +144,6 @@ export const templateService = {
    */
   updateTemplate: async (id, templateData) => {
     const payload = denormalizeTemplate(templateData);
-
     const data = await apiRequest(`/api/templates/${id}/`, {
       method: "PUT",
       body: payload,

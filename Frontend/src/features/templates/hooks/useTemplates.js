@@ -74,15 +74,26 @@ export const useTemplates = () => {
    */
   const updateTemplate = useCallback(async (id, templateData) => {
     setIsLoading(true);
+    // console.log("Hooks: ")
+    // console.log(templateData)
     setError(null);
     try {
       const response = await templateService.updateTemplate(id, templateData);
       setTemplates((prev) =>
         prev.map((t) => (t.id === id ? response.data : t))
       );
+      const filteredTemplates = templates.filter(
+        (t) =>
+          t.id.includes(response.data.id),
+      );
+      console.log("from rohit",filteredTemplates)
+      setSelectedTemplate(filteredTemplates)
+
       if (selectedTemplate?.id === id) {
+        console.log("Hooks: ", response.data);
         setSelectedTemplate(response.data);
       }
+      console.log("From useTemplate.js:  ",response.data)
       return response.data;
     } catch (err) {
       setError(err.message || 'Failed to update template');
@@ -91,7 +102,7 @@ export const useTemplates = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedTemplate?.id]);
+  }, [selectedTemplate]);
 
   /**
    * Clone template

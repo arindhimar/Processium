@@ -68,7 +68,8 @@ const TemplateDashboard = () => {
 
   const handleCreateTemplate = async (formData) => {
     try {
-      await createTemplate(formData);
+      let currentTemplate = await createTemplate(formData);
+      setSelectedTemplate(currentTemplate);
       setIsAddingInline(false);
     } catch (err) {
       console.error("[TemplateDashboard] Failed to create template:", err);
@@ -185,6 +186,7 @@ const TemplateDashboard = () => {
                   onUpdate={updateTemplate}
                   onDelete={handleDeleteTemplate}
                   onClone={cloneTemplate}
+                  setSelectedTemplate={setSelectedTemplate}
                   onClick={() => setSelectedTemplate(null)}
                   isSelected
                   isLoading={isLoading}
@@ -252,6 +254,7 @@ const TemplateDashboard = () => {
                   onUpdate={updateTemplate}
                   onDelete={handleDeleteTemplate}
                   onClone={cloneTemplate}
+                  setSelectedTemplate={setSelectedTemplate}
                   onClick={() => setSelectedTemplate(template)}
                   isSelected={false}
                   isLoading={isLoading}
