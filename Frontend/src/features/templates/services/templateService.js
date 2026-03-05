@@ -83,7 +83,7 @@ export function normalizeTemplate(raw) {
   return {
     id: raw.id,
     name: raw.template_name,
-    content: raw.template_description ?? "",
+    description: raw.template_description ?? "",
 
     subject: raw.subject ?? "",
     category: raw.category ?? "",
@@ -113,7 +113,6 @@ export const templateService = {
    */
   fetchTemplates: async () => {
     const data = await apiRequest("/api/templates/");
-    console.log(data);
     return { data: data.map(normalizeTemplate), success: true };
   },
 

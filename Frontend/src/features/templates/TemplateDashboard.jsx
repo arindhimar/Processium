@@ -1,36 +1,34 @@
 import { useState } from "react";
 import { useTemplates } from "./hooks/useTemplates";
 import TemplateRow from "./components/TemplateRow";
-import CreateTemplateModal from "./components/CreateTemplateModal";
 import WorkflowBuilder from "./components/WorkflowBuilder";
 import InlineTemplateRow from "./components/InlineTemplateRow";
 
-
 // ── Category lookup maps ───────────────────────────────────────────────────────
 
-const categoryIcons = {
-  Hiring:      "description",
-  Recruitment: "work",
-  Evaluation:  "rate_review",
-  Legal:       "gavel",
-  Process:     "checklist",
-  Finance:     "attach_money",
-  Onboarding:  "person_add",
-  Operations:  "settings",
-  General:     "file_copy",
-};
+// const categoryIcons = {
+//   Hiring:      "description",
+//   Recruitment: "work",
+//   Evaluation:  "rate_review",
+//   Legal:       "gavel",
+//   Process:     "checklist",
+//   Finance:     "attach_money",
+//   Onboarding:  "person_add",
+//   Operations:  "settings",
+//   General:     "file_copy",
+// };
 
-const categoryColors = {
-  Hiring:      "blue",
-  Recruitment: "cyan",
-  Evaluation:  "purple",
-  Legal:       "gray",
-  Process:     "teal",
-  Finance:     "pink",
-  Onboarding:  "green",
-  Operations:  "orange",
-  General:     "indigo",
-};
+// const categoryColors = {
+//   Hiring:      "blue",
+//   Recruitment: "cyan",
+//   Evaluation:  "purple",
+//   Legal:       "gray",
+//   Process:     "teal",
+//   Finance:     "pink",
+//   Onboarding:  "green",
+//   Operations:  "orange",
+//   General:     "indigo",
+// };
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
@@ -44,10 +42,10 @@ const TemplateDashboard = () => {
     cloneTemplate,
   } = useTemplates();
 
-  const [searchTerm,      setSearchTerm]      = useState("");
-  const [sortBy,          setSortBy]          = useState("modified");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("modified");
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [isAddingInline,  setIsAddingInline]  = useState(false);
+  const [isAddingInline, setIsAddingInline] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   // ── Derived data ─────────────────────────────────────────────────────────────
@@ -55,7 +53,7 @@ const TemplateDashboard = () => {
   const filteredTemplates = templates.filter(
     (t) =>
       t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (t.subject || "").toLowerCase().includes(searchTerm.toLowerCase())
+      (t.subject || "").toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const sortedTemplates = [...filteredTemplates].sort((a, b) => {
@@ -93,7 +91,6 @@ const TemplateDashboard = () => {
 
   return (
     <main className="flex-1 flex flex-col h-screen bg-background-light dark:bg-background-dark overflow-hidden w-full">
-
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <header className="h-14 px-8 bg-white/70 dark:bg-surface-dark/70 backdrop-blur-md border-b border-border-light dark:border-border-dark flex items-center justify-between shrink-0 sticky top-0 z-50">
         <div className="flex items-center gap-1">
@@ -147,7 +144,9 @@ const TemplateDashboard = () => {
 
           <div className="flex items-center gap-2">
             <button className="p-1.5 text-text-muted hover:text-primary hover:bg-primary/10 rounded-full transition-all relative group">
-              <span className="material-symbols-outlined text-[20px]">notifications</span>
+              <span className="material-symbols-outlined text-[20px]">
+                notifications
+              </span>
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-surface-light dark:border-surface-dark group-hover:scale-110 transition-transform" />
             </button>
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white text-[10px] font-bold cursor-pointer ring-2 ring-transparent hover:ring-primary/20 transition-all shadow-sm">
@@ -157,24 +156,22 @@ const TemplateDashboard = () => {
         </div>
       </header>
 
-
-
       {/* ── Main content ────────────────────────────────────────────────────── */}
 
       {selectedTemplate ? (
         /* ── Builder view: fixed template strip + flex builder ─────────────── */
         <div className="flex-1 flex flex-col overflow-hidden">
-
           {/* Template strip — same h-14 as the header */}
           <div className="h-12 shrink-0 flex items-center gap-3 px-4 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark overflow-hidden">
-
             {/* Back button */}
             <button
               onClick={() => setSelectedTemplate(null)}
               title="Back to all templates"
               className="flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold text-primary bg-primary/8 hover:bg-primary/15 border border-primary/20 transition-all shrink-0 group"
             >
-              <span className="material-symbols-outlined text-[16px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+              <span className="material-symbols-outlined text-[16px] group-hover:-translate-x-0.5 transition-transform">
+                arrow_back
+              </span>
               All Templates
             </button>
 
@@ -204,23 +201,27 @@ const TemplateDashboard = () => {
             />
           </div>
         </div>
-
       ) : (
         /* ── List view ─────────────────────────────────────────────────────── */
         <div className="flex-1 p-4 overflow-y-auto max-w-[1600px] mx-auto w-full">
-
           {/* Toolbar */}
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-3">
               <button className="px-3.5 py-1.5 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-xs font-semibold text-text-main dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 shadow-sm transition-all hover:border-primary/30">
-                <span className="material-symbols-outlined text-[16px] text-text-muted">filter_list</span>
+                <span className="material-symbols-outlined text-[16px] text-text-muted">
+                  filter_list
+                </span>
                 Filter
               </button>
               <button
-                onClick={() => setSortBy(sortBy === "modified" ? "name" : "modified")}
+                onClick={() =>
+                  setSortBy(sortBy === "modified" ? "name" : "modified")
+                }
                 className="px-3.5 py-1.5 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-xs font-semibold text-text-main dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 shadow-sm transition-all hover:border-primary/30"
               >
-                <span className="material-symbols-outlined text-[16px] text-text-muted">sort</span>
+                <span className="material-symbols-outlined text-[16px] text-text-muted">
+                  sort
+                </span>
                 {sortBy === "modified" ? "Recently Modified" : "By Name"}
               </button>
             </div>
@@ -235,12 +236,11 @@ const TemplateDashboard = () => {
 
           {/* ── Templates table ────────────────────────────────────────────── */}
           <div className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-card border border-border-light dark:border-border-dark overflow-hidden">
-
             {/* Column headers */}
-            <div className="grid grid-cols-12 gap-4 px-2 py-2 bg-gray-50/50 dark:bg-gray-800/50 border-b border-border-light dark:border-border-dark text-[9px] font-bold text-text-muted uppercase tracking-widest">
-              <div className="col-span-4 flex items-center pl-1">Title</div>
-              <div className="col-span-6 flex items-center">Description</div>
-              <div className="col-span-2 text-right pr-1">Actions</div>
+            <div className="grid grid-cols-[2fr_3fr_auto] px-6 py-3 text-sm font-semibold text-black dark:text-white border-b border-gray-200 dark:border-gray-700">
+              <div>Title</div>
+              <div>Description</div>
+              <div className="text-right">Actions</div>
             </div>
 
             {/* Rows */}
@@ -271,7 +271,9 @@ const TemplateDashboard = () => {
                 <span className="material-symbols-outlined text-[48px] text-text-muted block mb-3">
                   inbox
                 </span>
-                <p className="text-text-muted font-medium">No templates found</p>
+                <p className="text-text-muted font-medium">
+                  No templates found
+                </p>
                 <p className="text-xs text-text-muted mt-1">
                   {searchTerm
                     ? "Try a different search term"
