@@ -92,3 +92,30 @@ class TemplateDetailView(APIView):
         file_logger.info(msg, template_id)
         log_audit('template', template_id, 'delete', request.user.id, old_data={'name': deleted_name})
         return Response({"message": "Template deleted successfully."}, status=status.HTTP_200_OK)
+
+
+class TemplateCloneView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def post(self, request, template_id):
+        try:
+            original = Template.objects.get(id=template_id)
+        except Template.DoesNotExist:
+            logger.warning("Template not found for cloning | id=%s", template_id)
+            file_logger.warning("Template not found for cloning | id=%s", template_id)
+            return Response({"error": "Template not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        cloned = Template.objects.create(
+            template_name=f"{original.template_name} (Copy)",
+            template_description=original.template_description or '',
+            created_by=request.user,
+        )
+
+        msg = "Template cloned | original_id=%s cloned_id=%s name=%s"
+        logger.info(msg, template_id, cloned.id, cloned.template_name)
+        file_logger.info(msg, template_id, cloned.id, cloned.template_name)
+        log_audit('template', cloned.id, 'create', request.user.id,
+                  new_data={'name': cloned.template_name, 'cloned_from': str(template_id)})
+
+        return Response(TemplateSerializer(cloned).data, status=status.HTTP_201_CREATED)
+
