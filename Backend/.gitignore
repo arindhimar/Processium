@@ -32,6 +32,9 @@ templates/tests.py
 components/tests.py
 utils/tests/
 
+# Log files
+logs/
+
 # Migrations
 */migrations/
 utils/tests/

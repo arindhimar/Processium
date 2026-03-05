@@ -111,3 +111,7 @@ LOGGING = {
         'level': LOG_LEVEL,
     },
 }
+
+# ── File Logging ──────────────────────────────────────────────────────────────
+LOG_DIR = BASE_DIR / 'logs'
+LOG_FILE = LOG_DIR / 'processium.log'
