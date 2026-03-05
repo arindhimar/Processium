@@ -5,7 +5,7 @@ const InlineTemplateRow = ({ onSave, onCancel }) => {
     name: '',
     category: 'Hiring',
     subject: 'New Template',
-    content: '',
+    description: '',
     visibility: 'team',
   });
 
@@ -37,8 +37,8 @@ const InlineTemplateRow = ({ onSave, onCancel }) => {
         <input
           type="text"
           placeholder="Add a brief description..."
-          value={formData.content}
-          onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+          value={formData.description}
+          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           onKeyDown={(e) => {
             if (e.key === 'Enter') handleSave();
             if (e.key === 'Escape') onCancel();
